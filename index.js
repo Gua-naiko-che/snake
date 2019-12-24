@@ -1,3 +1,4 @@
+const BOARD_SIZE = 50;
 const snake1 = [
   [0, 0],
   [0, 1],
@@ -13,6 +14,16 @@ const snake2 = [
   [2, 1],
   [2, 2],
 ];
+
+function createBoard(size) {
+  const table = document.getElementById("board");
+  for (let rowIndex = 0; rowIndex < size; rowIndex++) {
+    const row = table.insertRow();
+    for (let rowIndex = 0; rowIndex < size; rowIndex++) {
+      row.insertCell();
+    }
+  }
+}
 
 function drawSnake(snake) {
   const table = document.getElementById("board");
@@ -32,10 +43,12 @@ function drawSnake(snake) {
   }
 }
 
-let flag = false;
+createBoard(BOARD_SIZE);
 
+let flag = false;
 setInterval(() => {
   const snake = flag ? snake1 : snake2;
   flag = !flag;
   drawSnake(snake);
 }, 1000);
+
