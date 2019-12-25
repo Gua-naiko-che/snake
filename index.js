@@ -7,7 +7,7 @@ const directionByKeyCode = {
   '40': Direction.down,
 }
 
-const BOARD_SIZE = 30;
+const BOARD_SIZE = 10;
 const BASE_SNAKE = [
   [0, 0],
   [0, 1],
@@ -59,7 +59,7 @@ function isSamePoint(p1, p2) {
   return p1[0] === p2[0] && p1[1] === p2[1];
 }
 
-function calculateNewSnake(oldSnake, direction) {
+function calculateNewSnake(oldSnake, direction, hasSnakeEatenTheFood) {
   const oldHead = oldSnake[oldSnake.length - 1];
 
   let newHead;
@@ -77,7 +77,7 @@ function calculateNewSnake(oldSnake, direction) {
   }
 
 
-  return [...oldSnake.slice(1), newHead];
+  return [...oldSnake.slice(hasSnakeEatenTheFood ? 0 : 1), newHead];
 }
 
 function captureSnakeMovements() {
@@ -115,12 +115,14 @@ function isGameOver(snake) {
 }
 
 function getRandomPoint() {
-  return [Math.floor(Math.random() * BOARD_SIZE), Math.floor(Math.random() * BOARD_SIZE)];
+  const food = [Math.floor(Math.random() * BOARD_SIZE), Math.floor(Math.random() * BOARD_SIZE)];
+
+  return isPointInSnake(food, snake) ? getRandomPoint() : food;
 }
 
-function calculateNewFood() {
+function hasSnakeEatenTheFood(snake, food) {
   const head = snake[snake.length - 1];
-  return isSamePoint(food, head) ? getRandomPoint() : food;
+  return isSamePoint(food, head);
 }
 
 let snake = BASE_SNAKE;
@@ -130,8 +132,12 @@ createBoard(BOARD_SIZE);
 captureSnakeMovements();
 
 (function gameLoop() {
-  snake = calculateNewSnake(snake, direction);
-  food = calculateNewFood();
+  const hasEaten = hasSnakeEatenTheFood(snake, food);
+  if (hasEaten) {
+    food = getRandomPoint();
+  }
+  snake = calculateNewSnake(snake, direction, hasEaten);
+
   if (!isGameOver(snake)) {
     drawSnake(snake, food);
     setTimeout(gameLoop, 100);
