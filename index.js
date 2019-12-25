@@ -77,7 +77,15 @@ function captureSnakeMovements() {
   }
 
   function setNewDirection(newDirection) {
-    direction = newDirection;
+    const isOpositeDirection =
+      (newDirection === Direction.up && direction === Direction.down)
+      || (newDirection === Direction.down && direction === Direction.up)
+      || (newDirection === Direction.left && direction === Direction.right)
+      || (newDirection === Direction.right && direction === Direction.left);
+
+    if (!isOpositeDirection) {
+      direction = newDirection;
+    }
   }
 }
 
