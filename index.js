@@ -1,4 +1,12 @@
 const Direction = Object.freeze({ "up": 1, "down": 2, "left": 3, "right": 4 })
+
+const directionByKeyCode = {
+  '37': Direction.left,
+  '38': Direction.up,
+  '39': Direction.right,
+  '40': Direction.down,
+}
+
 const BOARD_SIZE = 50;
 const BASE_SNAKE = [
   [0, 0],
@@ -61,23 +69,15 @@ function captureSnakeMovements() {
   document.onkeydown = function checkKey(e) {
     e = e || window.event;
 
-    if (e.keyCode == '37') {
-      setDirectionAndBlockWindowScroll(Direction.left, e);
-    }
-    else if (e.keyCode == '38') {
-      setDirectionAndBlockWindowScroll(Direction.up, e);
-    }
-    else if (e.keyCode == '39') {
-      setDirectionAndBlockWindowScroll(Direction.right, e);
-    }
-    else if (e.keyCode == '40') {
-      setDirectionAndBlockWindowScroll(Direction.down, e);
+    const newDirection = directionByKeyCode[e.keyCode];
+    if (newDirection) {
+      setNewDirection(newDirection);
+      e.preventDefault();
     }
   }
 
-  function setDirectionAndBlockWindowScroll(newDirection, event) {
+  function setNewDirection(newDirection) {
     direction = newDirection;
-    event.preventDefault();
   }
 }
 
