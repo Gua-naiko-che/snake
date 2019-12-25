@@ -7,6 +7,10 @@ td{
   height: 10px;
 }
 
-.black{
+.snake{
   background-color: black;
+}
+
+.food{
+  background-color: red;
 }

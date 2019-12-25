@@ -7,7 +7,7 @@ const directionByKeyCode = {
   '40': Direction.down,
 }
 
-const BOARD_SIZE = 50;
+const BOARD_SIZE = 30;
 const BASE_SNAKE = [
   [0, 0],
   [0, 1],
@@ -26,7 +26,7 @@ function createBoard(size) {
   }
 }
 
-function drawSnake(snake) {
+function drawSnake(snake, food) {
   const table = document.getElementById("board");
   const rows = table.getElementsByTagName("tr");
   for (let rowIndex = 0; rowIndex < rows.length; rowIndex++) {
@@ -36,16 +36,27 @@ function drawSnake(snake) {
       const cell = cells[colIndex];
       const isSnakeCell = isPointInSnake([rowIndex, colIndex], snake);
       if (isSnakeCell) {
-        cell.classList.add("black");
+        cell.classList.add("snake");
       } else {
-        cell.classList.remove("black");
+        cell.classList.remove("snake");
+      }
+
+      const isFoodCell = food[0] === rowIndex && food[1] === colIndex;
+      if (isFoodCell) {
+        cell.classList.add("food");
+      } else {
+        cell.classList.remove("food");
       }
     }
   }
 }
 
 function isPointInSnake(point, snake) {
-  return snake.some(c => c[0] === point[0] && c[1] === point[1]);
+  return snake.some(s => isSamePoint(s, point));
+}
+
+function isSamePoint(p1, p2) {
+  return p1[0] === p2[0] && p1[1] === p2[1];
 }
 
 function calculateNewSnake(oldSnake, direction) {
@@ -103,16 +114,26 @@ function isGameOver(snake) {
     || isPointInSnake(head, snake.slice(0, -1));
 }
 
+function getRandomPoint() {
+  return [Math.floor(Math.random() * BOARD_SIZE), Math.floor(Math.random() * BOARD_SIZE)];
+}
+
+function calculateNewFood() {
+  const head = snake[snake.length - 1];
+  return isSamePoint(food, head) ? getRandomPoint() : food;
+}
+
 let snake = BASE_SNAKE;
 let direction = Direction.right;
-
+let food = getRandomPoint();
 createBoard(BOARD_SIZE);
 captureSnakeMovements();
 
 (function gameLoop() {
   snake = calculateNewSnake(snake, direction);
+  food = calculateNewFood();
   if (!isGameOver(snake)) {
-    drawSnake(snake);
-    setTimeout(gameLoop, 1000);
+    drawSnake(snake, food);
+    setTimeout(gameLoop, 100);
   }
 })();
