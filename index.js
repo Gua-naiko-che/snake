@@ -1,17 +1,9 @@
 const BOARD_SIZE = 50;
-const snake1 = [
+const BASE_SNAKE = [
   [0, 0],
   [0, 1],
   [1, 1],
   [1, 2],
-  [2, 2],
-];
-
-const snake2 = [
-  [0, 0],
-  [1, 0],
-  [1, 1],
-  [2, 1],
   [2, 2],
 ];
 
@@ -43,12 +35,19 @@ function drawSnake(snake) {
   }
 }
 
+function calculateNewSnake(oldSnake) {
+  // just moving to the rigth for the moment...
+  const oldHead = oldSnake[oldSnake.length - 1];
+  const newHead = [oldHead[0], oldHead[1] + 1];
+
+  return [...oldSnake.slice(1), newHead];
+}
+
 createBoard(BOARD_SIZE);
 
-let flag = false;
+let snake = BASE_SNAKE;
 setInterval(() => {
-  const snake = flag ? snake1 : snake2;
-  flag = !flag;
+  snake = calculateNewSnake(snake);
   drawSnake(snake);
 }, 1000);
 
