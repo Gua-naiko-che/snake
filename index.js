@@ -26,7 +26,7 @@ function createBoard(size) {
   }
 }
 
-function drawSnake(snake, food) {
+function draw(snake, food) {
   const table = document.getElementById("board");
   const rows = table.getElementsByTagName("tr");
   for (let rowIndex = 0; rowIndex < rows.length; rowIndex++) {
@@ -59,7 +59,7 @@ function isSamePoint(p1, p2) {
   return p1[0] === p2[0] && p1[1] === p2[1];
 }
 
-function calculateNewSnake(oldSnake, direction, hasSnakeEatenTheFood) {
+function calculateNewSnake(oldSnake, direction, food) {
   const oldHead = oldSnake[oldSnake.length - 1];
 
   let newHead;
@@ -76,8 +76,9 @@ function calculateNewSnake(oldSnake, direction, hasSnakeEatenTheFood) {
     newHead = [oldHead[0], oldHead[1] + 1];
   }
 
+  const hasEaten = isSamePoint(food, newHead);
 
-  return [...oldSnake.slice(hasSnakeEatenTheFood ? 0 : 1), newHead];
+  return [...oldSnake.slice(hasEaten ? 0 : 1), newHead];
 }
 
 function captureSnakeMovements() {
@@ -132,14 +133,13 @@ createBoard(BOARD_SIZE);
 captureSnakeMovements();
 
 (function gameLoop() {
-  const hasEaten = hasSnakeEatenTheFood(snake, food);
-  if (hasEaten) {
+  snake = calculateNewSnake(snake, direction, food);
+  if (hasSnakeEatenTheFood(snake, food)) {
     food = getRandomPoint();
   }
-  snake = calculateNewSnake(snake, direction, hasEaten);
 
   if (!isGameOver(snake)) {
-    drawSnake(snake, food);
-    setTimeout(gameLoop, 100);
+    draw(snake, food);
+    setTimeout(gameLoop, 150);
   }
 })();
