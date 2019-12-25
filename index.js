@@ -1,3 +1,4 @@
+const Direction = Object.freeze({ "up": 1, "down": 2, "left": 3, "right": 4 })
 const BOARD_SIZE = 50;
 const BASE_SNAKE = [
   [0, 0],
@@ -35,19 +36,57 @@ function drawSnake(snake) {
   }
 }
 
-function calculateNewSnake(oldSnake) {
-  // just moving to the rigth for the moment...
+function calculateNewSnake(oldSnake, direction) {
   const oldHead = oldSnake[oldSnake.length - 1];
-  const newHead = [oldHead[0], oldHead[1] + 1];
+
+  let newHead;
+  if (direction == Direction.up) {
+    newHead = [oldHead[0] - 1, oldHead[1]];
+  }
+  else if (direction == Direction.down) {
+    newHead = [oldHead[0] + 1, oldHead[1]];
+  }
+  else if (direction == Direction.left) {
+    newHead = [oldHead[0], oldHead[1] - 1];
+  }
+  else if (direction == Direction.right) {
+    newHead = [oldHead[0], oldHead[1] + 1];
+  }
+
 
   return [...oldSnake.slice(1), newHead];
 }
 
-createBoard(BOARD_SIZE);
+function captureSnakeMovements() {
+  document.onkeydown = function checkKey(e) {
+    e = e || window.event;
+
+    if (e.keyCode == '37') {
+      setDirectionAndBlockWindowScroll(Direction.left, e);
+    }
+    else if (e.keyCode == '38') {
+      setDirectionAndBlockWindowScroll(Direction.up, e);
+    }
+    else if (e.keyCode == '39') {
+      setDirectionAndBlockWindowScroll(Direction.right, e);
+    }
+    else if (e.keyCode == '40') {
+      setDirectionAndBlockWindowScroll(Direction.down, e);
+    }
+  }
+
+  function setDirectionAndBlockWindowScroll(newDirection, event) {
+    direction = newDirection;
+    event.preventDefault();
+  }
+}
 
 let snake = BASE_SNAKE;
-setInterval(() => {
-  snake = calculateNewSnake(snake);
-  drawSnake(snake);
-}, 1000);
+let direction = Direction.right;
 
+createBoard(BOARD_SIZE);
+captureSnakeMovements();
+setInterval(() => {
+  snake = calculateNewSnake(snake, direction);
+  drawSnake(snake);
+}, 100);
