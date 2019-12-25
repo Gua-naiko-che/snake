@@ -34,7 +34,7 @@ function drawSnake(snake) {
     const cells = row.getElementsByTagName("td");
     for (let colIndex = 0; colIndex < cells.length; colIndex++) {
       const cell = cells[colIndex];
-      const isSnakeCell = snake.some(c => c[0] === rowIndex && c[1] === colIndex);
+      const isSnakeCell = isPointInSnake([rowIndex, colIndex], snake);
       if (isSnakeCell) {
         cell.classList.add("black");
       } else {
@@ -42,6 +42,10 @@ function drawSnake(snake) {
       }
     }
   }
+}
+
+function isPointInSnake(point, snake) {
+  return snake.some(c => c[0] === point[0] && c[1] === point[1]);
 }
 
 function calculateNewSnake(oldSnake, direction) {
@@ -89,12 +93,26 @@ function captureSnakeMovements() {
   }
 }
 
+function isGameOver(snake) {
+  const head = snake[snake.length - 1];
+
+  return head[0] < 0
+    || head[1] < 0
+    || head[0] > BOARD_SIZE - 1
+    || head[1] > BOARD_SIZE - 1
+    || isPointInSnake(head, snake.slice(0, -1));
+}
+
 let snake = BASE_SNAKE;
 let direction = Direction.right;
 
 createBoard(BOARD_SIZE);
 captureSnakeMovements();
-setInterval(() => {
+
+(function gameLoop() {
   snake = calculateNewSnake(snake, direction);
-  drawSnake(snake);
-}, 100);
+  if (!isGameOver(snake)) {
+    drawSnake(snake);
+    setTimeout(gameLoop, 1000);
+  }
+})();
