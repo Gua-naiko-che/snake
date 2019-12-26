@@ -8,6 +8,7 @@ const directionByKeyCode = {
 }
 
 const BOARD_SIZE = 10;
+const SNAKE_SIZE = 10;
 const BASE_SNAKE = [
   [0, 0],
   [0, 1],
@@ -17,38 +18,30 @@ const BASE_SNAKE = [
 ];
 
 function createBoard(size) {
-  const table = document.getElementById("board");
-  for (let rowIndex = 0; rowIndex < size; rowIndex++) {
-    const row = table.insertRow();
-    for (let rowIndex = 0; rowIndex < size; rowIndex++) {
-      row.insertCell();
-    }
-  }
+  const board = document.getElementById("board");
+  board.height = SNAKE_SIZE * size;
+  board.width = SNAKE_SIZE * size;
 }
 
 function draw(snake, food) {
-  const table = document.getElementById("board");
-  const rows = table.getElementsByTagName("tr");
-  for (let rowIndex = 0; rowIndex < rows.length; rowIndex++) {
-    const row = rows[rowIndex];
-    const cells = row.getElementsByTagName("td");
-    for (let colIndex = 0; colIndex < cells.length; colIndex++) {
-      const cell = cells[colIndex];
-      const isSnakeCell = isPointInSnake([rowIndex, colIndex], snake);
-      if (isSnakeCell) {
-        cell.classList.add("snake");
-      } else {
-        cell.classList.remove("snake");
-      }
+  var board = document.getElementById('board');
+  var ctx = board.getContext('2d');
 
-      const isFoodCell = food[0] === rowIndex && food[1] === colIndex;
-      if (isFoodCell) {
-        cell.classList.add("food");
-      } else {
-        cell.classList.remove("food");
-      }
-    }
-  }
+  // Clear canvas
+  ctx.fillStyle = "white";
+  ctx.fillRect(0, 0, board.height, board.width);
+
+  // Draw snake
+  snake.forEach(s => {
+    const x = s[1] * SNAKE_SIZE;
+    const y = s[0] * SNAKE_SIZE;
+    ctx.fillStyle = "black";
+    ctx.fillRect(x, y, SNAKE_SIZE, SNAKE_SIZE);
+  });
+
+  //Draw food
+  ctx.fillStyle = "red";
+  ctx.fillRect(food[1] * SNAKE_SIZE, food[0] * SNAKE_SIZE, SNAKE_SIZE, SNAKE_SIZE);
 }
 
 function isPointInSnake(point, snake) {
