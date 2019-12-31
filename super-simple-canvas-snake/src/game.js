@@ -26,19 +26,11 @@ export class Game {
       || this.isPointInArray(head, this.snake.slice(0, -1));
   }
 
-  calculateRandomFood() {
-    const food = [Math.floor(Math.random() * this.boardSize), Math.floor(Math.random() * this.boardSize)];
-
-    if (this.isPointInSnake(food)) {
+  update() {
+    this.calculateNewSnake();
+    if (this.hasSnakeEatenTheFood()) {
       this.calculateRandomFood();
-    } else {
-      this.food = food;
     }
-  }
-
-  hasSnakeEatenTheFood() {
-    const head = this.snake[this.snake.length - 1];
-    return this.isSamePoint(this.food, head);
   }
 
   calculateNewSnake() {
@@ -63,6 +55,21 @@ export class Game {
     this.snake = [...this.snake.slice(hasEaten ? 0 : 1), newHead];
   }
 
+  hasSnakeEatenTheFood() {
+    const head = this.snake[this.snake.length - 1];
+    return this.isSamePoint(this.food, head);
+  }
+
+  calculateRandomFood() {
+    const food = [Math.floor(Math.random() * this.boardSize), Math.floor(Math.random() * this.boardSize)];
+
+    if (this.isPointInSnake(food)) {
+      this.calculateRandomFood();
+    } else {
+      this.food = food;
+    }
+  }
+
   isPointInSnake(point) {
     return this.isPointInArray(point, this.snake);
   }
@@ -70,7 +77,6 @@ export class Game {
   isPointInArray(point, array) {
     return array.some(s => this.isSamePoint(s, point));
   }
-
 
   isSamePoint(p1, p2) {
     return p1[0] === p2[0] && p1[1] === p2[1];
